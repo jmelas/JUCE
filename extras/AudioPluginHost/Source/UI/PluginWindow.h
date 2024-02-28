@@ -219,11 +219,7 @@ public:
         node->properties.set (getLastYProp (type), getY());
     }
 
-    void closeButtonPressed() override
-    {
-        node->properties.set (getOpenProp (type), false);
-        activeWindowList.removeObject (this);
-    }
+    void closeButtonPressed() override;
 
     static String getLastXProp (Type type)    { return "uiLastX_" + getTypeName (type); }
     static String getLastYProp (Type type)    { return "uiLastY_" + getTypeName (type); }

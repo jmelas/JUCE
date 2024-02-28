@@ -38,6 +38,8 @@
 
 constexpr const char* scanModeKey = "pluginScanMode";
 
+static MainHostWindow * mainWindow = nullptr;
+
 //==============================================================================
 class Superprocess final : private ChildProcessCoordinator
 {
@@ -376,6 +378,8 @@ MainHostWindow::MainHostWindow()
    #endif
   #endif
 
+    mainWindow = this;
+
     getCommandManager().setFirstCommandTarget (this);
 }
 
@@ -403,6 +407,9 @@ MainHostWindow::~MainHostWindow()
 
 void MainHostWindow::closeButtonPressed()
 {
+    //save plugin state on close
+    if (graphHolder != nullptr && graphHolder->graph != nullptr)
+        graphHolder->graph->saveAsync(true, true, nullptr);
     tryToQuitApplication();
 }
 
@@ -1043,4 +1050,12 @@ void MainHostWindow::updateAutoScaleMenuItem (ApplicationCommandInfo& info)
 {
     info.setInfo ("Auto-Scale Plug-in Windows", {}, "General", 0);
     info.setTicked (isAutoScalePluginWindowsEnabled());
+}
+
+void PluginWindow::closeButtonPressed()
+{
+    node->properties.set(getOpenProp(type), false);
+    activeWindowList.removeObject(this);
+    //quit app on close plugin editor
+    mainWindow->closeButtonPressed();
 }
