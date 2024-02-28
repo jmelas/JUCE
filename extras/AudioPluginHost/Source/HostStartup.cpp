@@ -208,8 +208,14 @@ public:
 
         if (fileToOpen.existsAsFile())
             if (auto* graph = mainWindow->graphHolder.get())
-                if (auto* ioGraph = graph->graph.get())
-                    ioGraph->loadFrom (fileToOpen, true);
+                if (auto * ioGraph = graph->graph.get())
+                {
+                    ioGraph->loadFrom(fileToOpen, true);
+                    //open plugin editor on file open -- todo find plugin by name
+                    if (auto f = graph->graph->graph.getNodeForId(AudioProcessorGraph::NodeID(26)))
+                        if (auto * w = graph->graph->getOrCreateWindowFor(f, PluginWindow::Type::normal))
+                            w->toFront(true);
+                }
     }
 
     void shutdown() override
